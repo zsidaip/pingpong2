@@ -11,13 +11,15 @@ import android.view.View;
  * Created by VIP on 2016.04.20..
  */
 public class Game extends View {
+
     private Rect ore;
     private Paint black;
     private Paint white;
-    Coord ball;
+    Ball ball;
     Tile prec1,prec2;
     private boolean b_init;
     private int ball_x_direction,ball_y_direction;
+    byte point1,point2;
 
     public Game(Context context) {
         super(context);
@@ -41,38 +43,35 @@ public class Game extends View {
             b_init=true;
             init(getWidth(),getHeight());
         }
+        int res=ball.Move(prec1, prec2);
+        if(res!=0){
+            if(res==1){
+                point1+=1;
+            }else{
+                point2+=1;
+            }
+        }
+        prec1.Move();
         //clear view
         this.ore.set(0,0, canvas.getWidth(), canvas.getHeight());
         canvas.drawRect(this.ore, this.black);
         //draw ball
-        canvas.drawCircle(ball.x, ball.y, 10,this.white);
-
-        //recalculate ball pos
-        if (ball.x+10>getWidth()){
-            ball_x_direction=-1;
-        }else if(ball.x-10<0){
-            ball_x_direction=1;
-        }
-        if (ball.y+10>getHeight()){
-            ball_y_direction=-1;
-        }else if(ball.y-10<0){
-            ball_y_direction=1;
-        }
-
-        ball.x+=5*ball_x_direction;
-        ball.y+=7*ball_y_direction;
-
+        canvas.drawCircle(ball.x, ball.y, ball.size, this.white);
         //draw player1
         canvas.drawRect(prec1.x, prec1.y, prec1.x2, prec1.y2, this.white);
         //draw player2
-        canvas.drawRect(prec2.x,prec2.y,prec2.x2, prec2.y2,this.white);
+        canvas.drawRect(prec2.x, prec2.y, prec2.x2, prec2.y2, this.white);
+        //recalculate ball pos
+        canvas.drawText("Player2:" + String.valueOf(point2) + " | Player1: " + String.valueOf(point1), getWidth() / 2, 30, this.white);
 
         invalidate();
     }
     private void init(int w, int h){
-        ball=new Coord(20,20);
         int ex=1; int ey=1;
+        ball=new Ball(10,h,w,ex,ey);
         prec1=new Tile(w-10,h/2,h,w,ex,ey);
         prec2=new Tile(1,h/2,h,w,ex,ey);
+        point1=0;
+        point2=0;
     }
 }
