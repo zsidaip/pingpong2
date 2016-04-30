@@ -1,5 +1,7 @@
 package pong.nik.uniobuda.hu.pong;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,6 +19,7 @@ public class MainMenu extends AppCompatActivity {
 
     Game game;
     SensorManager manager;
+    BluetoothAdapter adapter;//=new BluetoothAdapter();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,18 @@ public class MainMenu extends AppCompatActivity {
         game=new Game(this);
         setContentView(game);
         manager= (SensorManager) getSystemService(SENSOR_SERVICE);
+        adapter=BluetoothAdapter.getDefaultAdapter();
+        if(adapter == null){
+            // Bluetooth nem támogatott
+        }else if(!adapter.isEnabled()){
+            // BT nincs engedélyezve, küldünk egy kérést
+            Intent i = new Intent(
+                    BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(i);
+        }else{
+
+        }
+
     }
 
     @Override
@@ -70,7 +85,7 @@ public class MainMenu extends AppCompatActivity {
                 move*=-1;
                 direction*=-1;
             }
-            game.prec1.Move(direction,move);
+            game.prec1.setMove(direction, move);
         }
 
         @Override
